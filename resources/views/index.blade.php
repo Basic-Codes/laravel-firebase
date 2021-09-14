@@ -32,6 +32,12 @@
                 <button style="margin-left: 10px;" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addUserModal">
                     Add User
                 </button>
+                <div class="d-flex">
+                    <input style="margin-left: 10px;"class="form-control" type="number" placeholder="Phone Number" aria-label="Search">
+                    <button style="margin-left: 5px;"  class="btn btn-primary" type="submit"><i class="fas fa-plus-circle"></i></button>
+                    <button style="margin-left: 5px;"  class="btn btn-success" type="submit"><i class="fas fa-arrow-circle-right"></i></button>
+                    <button style="margin-left: 5px;"  class="btn btn-warning" type="submit"><i class="fas fa-archive"></i></button>
+                </div>
             </div>
         </div>
     </div>
@@ -79,4 +85,25 @@
 </div>
 
 
+@endsection
+
+
+@section('script')
+    <script>
+        addToQ = () => {
+            $.ajax({
+                url: '{{route('q.add')}}',
+                type: 'GET',
+                dataType: 'JSON',
+                data: {},
+                success: function (result) {
+                    console.log(result);
+                },
+                error: function (error) {
+                    console.log(error);
+                },
+            });
+        }
+    </script>
+    
 @endsection
