@@ -15,6 +15,10 @@ class CreateQueuesTable extends Migration
     {
         Schema::create('queues', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('shop_id')->constrained('shops')->onDelete('cascade');
+            $table->string('position');
+            $table->string('mobile');
+            $table->string('status');
             $table->timestamps();
         });
     }
