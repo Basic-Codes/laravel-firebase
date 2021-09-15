@@ -99,13 +99,13 @@
 
     <script>
         // ⚽️ First Way
-        curr_user_id = JSON.parse("{{ json_encode($curr_user->id) }}")
+        // curr_user_id = JSON.parse("{{ json_encode($curr_user->id ?? 'X') }}")
         // ⚽️ Second Way
-        // curr_user_id = {!! json_encode($curr_user->id) !!};
+        curr_user_id = {!! json_encode(($curr_user->id ?? 'X')) !!};
 
         addToQ = (type) => {
             phone = document.querySelector('input[name="phone"]').value
-            
+
             data = {
                 'curr_user_id': curr_user_id,
                 'phone': phone,
@@ -125,6 +125,47 @@
                 },
             });
         }
+    </script>
+    
+    {{-- ----------------------------------------------------------------- --}}
+    {{--                          Firebase Setup                           --}}
+    {{-- ----------------------------------------------------------------- --}}
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.1/firebase-app.js";
+        import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/9.0.1/firebase-database.js";
+        
+        const firebaseConfig = {
+            apiKey: "AIzaSyBw6Gz1Iip73-RiTWgE1H76I7FsP9Yhe7c",
+            authDomain: "pushnotification-xxxxxxxx.firebaseapp.com",
+            databaseURL: "https://pushnotification-xxxxxxxx-default-rtdb.firebaseio.com",
+            projectId: "pushnotification-xxxxxxxx",
+            storageBucket: "pushnotification-xxxxxxxx.appspot.com",
+            messagingSenderId: "836414008971",
+            appId: "1:836414008971:web:f4b8faf34e0fbb35852e8e"
+        };
+
+        const app = initializeApp(firebaseConfig);
+
+        let title = document.querySelector('#title')
+
+        const db = getDatabase();
+        const titleRef = ref(db, 'title');
+        onValue(titleRef, (snapshot) => {
+            const data = snapshot.val();
+            console.log(data);
+            // updateStarCount(postElement, data);
+            title.innerText = data;
+        });
+        // let titleRef = getDatabase().ref().child('title');
+        // titleRef.on('value', snap => title.innerText = snap.val());
+
+        function writeUserData() {
+            set(ref(db, 'user/'), {
+                name: 'Ghost',
+                email: 'ghost@gmail.com',
+            });
+        }
+        // writeUserData()
     </script>
     
 @endsection

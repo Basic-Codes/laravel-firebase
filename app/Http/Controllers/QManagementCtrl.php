@@ -22,12 +22,18 @@ class QManagementCtrl extends Controller
         if(!$curr_shop) return ['success'=>false, 'msg'=>'Shop not found'];
 
         $today = Carbon::today();
-        $last_Q = Queue::where([['status', '!=', 'complete'], ['created_at', '>=', $today]])->latest('created_at')->first();
-        $next_pos = $this->countNextPos($last_Q->position);
+        $last_Q = Queue::where([
+                ['user_id', $curr_user->id],
+                ['shop_id', $curr_shop->id],
+                ['status', '!=', 'complete'],
+                ['created_at', '>=', $today]
+            ])->latest('created_at')->first();
+        $next_pos = $this->countNextPos($last_Q);
         
         
         // Adding Queue
         $Q = new Queue();
+        $Q->user_id = $curr_user->id;
         $Q->shop_id = $curr_shop->id;
         $Q->phone = $request->phone;
         $Q->position = $next_pos;
@@ -48,8 +54,9 @@ class QManagementCtrl extends Controller
         return ['success'=>true, 'msg'=>$msg];
     }
 
-    protected function countNextPos($next_pos) {
-        $next_pos = intval($next_pos) + 1;
+    protected function countNextPos($last_Q) {
+        $last_pos = isset($last_Q) ? $last_Q->position : '0000';
+        $next_pos = intval($last_pos) + 1;
         switch (strlen((string)$next_pos)) {
             case 1:
                 $next_pos = '0000'.$next_pos;
