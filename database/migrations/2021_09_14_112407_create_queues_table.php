@@ -17,7 +17,7 @@ class CreateQueuesTable extends Migration
             $table->id();
             $table->foreignId('shop_id')->constrained('shops')->onDelete('cascade');
             $table->string('position');
-            $table->string('mobile');
+            $table->string('phone');
             $table->string('status');
             $table->timestamps();
         });

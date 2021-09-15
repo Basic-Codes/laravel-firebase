@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\QManagementCtrl;
 use App\Http\Controllers\TestController;
 use Illuminate\Support\Facades\Route;
 
@@ -21,3 +22,5 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::post('add-user', [HomeController::class, 'addUser'])->name('user.add');
 Route::post('add-shop', [HomeController::class, 'addShop'])->name('shop.add');
 Route::get('active-shop', [HomeController::class, 'activeShop'])->name('shop.active');
+
+Route::post('add-to-q', [QManagementCtrl::class, 'addToQ'])->name('q.add');

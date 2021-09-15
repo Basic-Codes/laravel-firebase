@@ -33,10 +33,10 @@
                     Add User
                 </button>
                 <div class="d-flex">
-                    <input style="margin-left: 10px;"class="form-control" type="number" placeholder="Phone Number" aria-label="Search">
-                    <button style="margin-left: 5px;"  class="btn btn-primary" type="submit"><i class="fas fa-plus-circle"></i></button>
-                    <button style="margin-left: 5px;"  class="btn btn-success" type="submit"><i class="fas fa-arrow-circle-right"></i></button>
-                    <button style="margin-left: 5px;"  class="btn btn-warning" type="submit"><i class="fas fa-archive"></i></button>
+                    <input style="margin-left: 10px;"class="form-control" name="phone" type="number" placeholder="Phone Number" aria-label="Search">
+                    <button onclick="addToQ('queue')" style="margin-left: 5px;"  class="btn btn-primary" type="submit"><i class="fas fa-plus-circle"></i></button>
+                    <button onclick="addToQ('serve')" style="margin-left: 5px;"  class="btn btn-success" type="submit"><i class="fas fa-arrow-circle-right"></i></button>
+                    <button onclick="addToQ('park')" style="margin-left: 5px;"  class="btn btn-warning" type="submit"><i class="fas fa-archive"></i></button>
                 </div>
             </div>
         </div>
@@ -88,14 +88,35 @@
 @endsection
 
 
-@section('script')
+@section('scripts')
+    <script type="text/javascript">
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+    </script>
+
     <script>
-        addToQ = () => {
+        // ⚽️ First Way
+        curr_user_id = JSON.parse("{{ json_encode($curr_user->id) }}")
+        // ⚽️ Second Way
+        // curr_user_id = {!! json_encode($curr_user->id) !!};
+
+        addToQ = (type) => {
+            phone = document.querySelector('input[name="phone"]').value
+            
+            data = {
+                'curr_user_id': curr_user_id,
+                'phone': phone,
+                'type': type
+            }
+
             $.ajax({
                 url: '{{route('q.add')}}',
-                type: 'GET',
+                type: 'POST',
                 dataType: 'JSON',
-                data: {},
+                data: data,
                 success: function (result) {
                     console.log(result);
                 },
