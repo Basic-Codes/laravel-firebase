@@ -24,6 +24,8 @@ class HomeController extends Controller
             else $curr_shop = Shop::where('user_id', $curr_user->id)->first();
         }
         
+        // ⚽️ Might show some bug if $curr_user or $curr_shop doesn't exist
+        if($curr_user && $curr_shop) (new FirebaseController())->replaceInFirebase($curr_user, $curr_shop);
         
         return view('index', compact('users', 'curr_user', 'shops', 'curr_shop'));
     }

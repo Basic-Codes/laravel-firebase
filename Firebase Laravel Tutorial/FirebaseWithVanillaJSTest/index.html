@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase With VanillaJS</title>
+</head>
+<body>
+
+    <h1 id="title">Hello</h1>
+    
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.1/firebase-app.js";
+        import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/9.0.1/firebase-database.js";
+        
+        const firebaseConfig = {
+            apiKey: "AIzaSyBw6Gz1Iip73-RiTWgE1H76I7FsP9Yhe7c",
+            authDomain: "pushnotification-xxxxxxxx.firebaseapp.com",
+            databaseURL: "https://pushnotification-xxxxxxxx-default-rtdb.firebaseio.com",
+            projectId: "pushnotification-xxxxxxxx",
+            storageBucket: "pushnotification-xxxxxxxx.appspot.com",
+            messagingSenderId: "836414008971",
+            appId: "1:836414008971:web:f4b8faf34e0fbb35852e8e"
+        };
+
+        const app = initializeApp(firebaseConfig);
+
+        let title = document.querySelector('#title')
+
+        const db = getDatabase();
+        const titleRef = ref(db, 'title');
+        onValue(titleRef, (snapshot) => {
+            const data = snapshot.val();
+            console.log(data);
+            // updateStarCount(postElement, data);
+            title.innerText = data;
+        });
+        // let titleRef = getDatabase().ref().child('title');
+        // titleRef.on('value', snap => title.innerText = snap.val());
+
+        function writeUserData() {
+            set(ref(db, 'user/'), {
+                name: 'Ghost',
+                email: 'ghost@gmail.com',
+            });
+        }
+        // writeUserData()
+    </script>
+</body>
+</html>

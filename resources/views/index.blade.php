@@ -46,31 +46,35 @@
     <div class="col-3">
         <div class="card">
             <div class="card-body">
-              <h5 class="text-center">Parked</h5>
+              <h5 class="text-center mb-3">Parked</h5>
+              <ul class="list-group" id="park_list">
+                {{-- <li class="list-group-item bg-dark text-light mb-2">
+                    <span class="d-flex justify-content-between align-items-center">
+                        <strong class="h5 mb-0">00001</strong>
+                        <span>
+                            <button class="btn btn-sm btn-primary"><i class="fas fa-play"></i></button>
+                            <button class="btn btn-sm btn-light"><i class="fas fa-bell"></i></button>
+                        </span>
+                    </span>
+                </li> --}}
+            </ul>
             </div>
           </div>
     </div>
     <div class="col-3">
         <div class="card">
             <div class="card-body">
-                <h5 class="text-center">Serving</h5>
-            </div>
-          </div>
-    </div>
-    <div class="col-3">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="text-center">Queue</h5>
-                <ul class="list-group">
-                    <li class="list-group-item bg-dark text-light">
-                        <span class="d-flex justify-content-between">
+                <h5 class="text-center mb-3">Serving</h5>
+                <ul class="list-group" id="serve_list">
+                    {{-- <li class="list-group-item bg-dark text-light mb-2">
+                        <span class="d-flex justify-content-between align-items-center">
                             <strong class="h5 mb-0">00001</strong>
                             <span>
-                                <button class="btn btn-sm btn-primary"><i class="fas fa-phone-square"></i></button>
-                                <button class="btn btn-sm btn-light"><i class="fas fa-edit"></i></button>
+                                <button class="btn btn-sm btn-primary"><i class="fas fa-check-double"></i></button>
+                                <button class="btn btn-sm btn-light"><i class="fas fa-archive"></i></button>
                             </span>
                         </span>
-                    </li>
+                    </li> --}}
                 </ul>
             </div>
           </div>
@@ -78,7 +82,34 @@
     <div class="col-3">
         <div class="card">
             <div class="card-body">
-                <h5 class="text-center">Called</h5>
+                <h5 class="text-center mb-3">Queue</h5>
+                <ul class="list-group" id="queue_list">
+                    {{-- <li class="list-group-item bg-dark text-light mb-2">
+                        <span class="d-flex justify-content-between align-items-center">
+                            <strong class="h5 mb-0">00001</strong>
+                            <span>
+                                <button class="btn btn-sm btn-primary"><i class="fas fa-phone-alt"></i></button>
+                                <button class="btn btn-sm btn-info"><i class="fas fa-concierge-bell"></i></button>
+                                <button class="btn btn-sm btn-light"><i class="fas fa-edit"></i></button>
+                                <button class="btn btn-sm btn-warning"><i class="fas fa-archive"></i></button>
+                            </span>
+                        </span>
+                    </li> --}}
+                </ul>
+            </div>
+          </div>
+    </div>
+    <div class="col-3">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="text-center mb-3">Called</h5>
+                <div class="d-flex justify-content-start">
+                    <button onclick="call()" class="btn btn-lg btn-primary"><i class="fas fa-phone-alt"></i></button>
+                    <button class="btn btn-lg btn-success mx-2"><i class="fas fa-concierge-bell"></i></button>
+                </div>
+                <div class="text-center my-3 py-3 rounded-3" style="background: rgb(209, 209, 209)">
+                    <h1 class="display-2" style="font-weight: 800;" id="called_item">0</h1>
+                </div>
             </div>
           </div>
     </div>
@@ -102,9 +133,11 @@
         // curr_user_id = JSON.parse("{{ json_encode($curr_user->id ?? 'X') }}")
         // ⚽️ Second Way
         curr_user_id = {!! json_encode(($curr_user->id ?? 'X')) !!};
+        curr_shop_id = {!! json_encode(($curr_shop->id ?? 'X')) !!};
 
         addToQ = (type) => {
-            phone = document.querySelector('input[name="phone"]').value
+            phone_input = document.querySelector('input[name="phone"]')
+            phone = phone_input.value
 
             data = {
                 'curr_user_id': curr_user_id,
@@ -119,12 +152,121 @@
                 data: data,
                 success: function (result) {
                     console.log(result);
+                    phone_input.value = ''
                 },
                 error: function (error) {
                     console.log(error);
                 },
             });
         }
+        call = (id = 'X') => {
+
+            data = {
+                'curr_user_id': curr_user_id,
+                'id': id
+            }
+
+            $.ajax({
+                url: '{{route('q.call')}}',
+                type: 'POST',
+                dataType: 'JSON',
+                data: data,
+                success: function (result) {
+                    console.log(result);
+                },
+                error: function (error) {
+                    console.log(error);
+                },
+            });
+        }
+
+
+
+
+        // ====================================================================================================================
+        //                                                     Rendering
+        // ====================================================================================================================
+
+        // =========================
+        //           Queue
+        // =========================
+        var renderQ = (snapshot) => {
+            queue_list = document.querySelector('#queue_list')
+            queue_list.innerHTML = ''
+            snapshot.forEach((child) => {
+                // console.log(child.key, child.val());
+
+                new_el = document.createElement('div')
+                new_el.innerHTML = `<li class="list-group-item bg-dark text-light mb-2">
+                                        <span class="d-flex justify-content-between align-items-center">
+                                            <strong class="h5 mb-0">${child.val().position}</strong>
+                                            <span>
+                                                <button class="btn btn-sm btn-primary"><i class="fas fa-phone-alt"></i></button>
+                                                <button class="btn btn-sm btn-info"><i class="fas fa-concierge-bell"></i></button>
+                                                <button class="btn btn-sm btn-light"><i class="fas fa-edit"></i></button>
+                                                <button class="btn btn-sm btn-warning"><i class="fas fa-archive"></i></button>
+                                            </span>
+                                        </span>
+                                    </li>`;
+                queue_list.appendChild(new_el) 
+            });
+        };
+        // =========================
+        //           Serve
+        // =========================
+        var renderServe = (snapshot) => {
+            serve_list = document.querySelector('#serve_list')
+            serve_list.innerHTML = ''
+            snapshot.forEach((child) => {
+                // console.log(child.key, child.val());
+
+                new_el = document.createElement('div')
+                new_el.innerHTML = `<li class="list-group-item bg-dark text-light mb-2">
+                                        <span class="d-flex justify-content-between align-items-center">
+                                            <strong class="h5 mb-0">${child.val().position}</strong>
+                                            <span>
+                                                <button class="btn btn-sm btn-primary"><i class="fas fa-check-double"></i></button>
+                                                <button class="btn btn-sm btn-light"><i class="fas fa-archive"></i></button>
+                                            </span>
+                                        </span>
+                                    </li>`;
+                serve_list.appendChild(new_el) 
+            });
+        };
+        // =========================
+        //            Park
+        // =========================
+        var renderPark = (snapshot) => {
+            park_list = document.querySelector('#park_list')
+            park_list.innerHTML = ''
+            snapshot.forEach((child) => {
+                // console.log(child.key, child.val());
+
+                new_el = document.createElement('div')
+                new_el.innerHTML = `<li class="list-group-item bg-dark text-light mb-2">
+                                        <span class="d-flex justify-content-between align-items-center">
+                                            <strong class="h5 mb-0">${child.val().position}</strong>
+                                            <span>
+                                                <button class="btn btn-sm btn-primary"><i class="fas fa-play"></i></button>
+                                                <button class="btn btn-sm btn-light"><i class="fas fa-bell"></i></button>
+                                            </span>
+                                        </span>
+                                    </li>`;
+                park_list.appendChild(new_el) 
+            });
+        };
+        // =========================
+        //           Called
+        // =========================
+        var renderCalled = (snapshot) => {
+            called_item = document.querySelector('#called_item')
+            console.log(snapshot);
+            snapshot.forEach((child) => {
+                // console.log(child.key, child.val());
+
+                called_item.innerText = child.val().position  || 0
+            });
+        };
     </script>
     
     {{-- ----------------------------------------------------------------- --}}
@@ -146,25 +288,43 @@
 
         const app = initializeApp(firebaseConfig);
 
-        let title = document.querySelector('#title')
+        console.log(`${curr_user_id}/${curr_shop_id}/queue`);
 
         const db = getDatabase();
-        const titleRef = ref(db, 'title');
-        onValue(titleRef, (snapshot) => {
-            const data = snapshot.val();
-            console.log(data);
-            // updateStarCount(postElement, data);
-            title.innerText = data;
-        });
-        // let titleRef = getDatabase().ref().child('title');
-        // titleRef.on('value', snap => title.innerText = snap.val());
 
-        function writeUserData() {
-            set(ref(db, 'user/'), {
-                name: 'Ghost',
-                email: 'ghost@gmail.com',
-            });
-        }
+
+        const queueRef = ref(db, `${curr_user_id}/${curr_shop_id}/queue`);
+        onValue(queueRef, (snapshot) => {
+            const data = snapshot.val();
+            // console.log(data);
+            renderQ(snapshot)
+        });
+        const serveRef = ref(db, `${curr_user_id}/${curr_shop_id}/serve`);
+        onValue(serveRef, (snapshot) => {
+            const data = snapshot.val();
+            // console.log(data);
+            renderServe(snapshot)
+        });
+        const parkRef = ref(db, `${curr_user_id}/${curr_shop_id}/park`);
+        onValue(parkRef, (snapshot) => {
+            const data = snapshot.val();
+            // console.log(data);
+            renderPark(snapshot)
+        });
+        const calledRef = ref(db, `${curr_user_id}/${curr_shop_id}/called`);
+        onValue(calledRef, (snapshot) => {
+            const data = snapshot.val();
+            // console.log(data);
+            renderCalled(snapshot)
+        });
+
+        
+        // function writeUserData() {
+        //     set(ref(db, 'user/'), {
+        //         name: 'Ghost',
+        //         email: 'ghost@gmail.com',
+        //     });
+        // }
         // writeUserData()
     </script>
     

@@ -24,3 +24,4 @@ Route::post('add-shop', [HomeController::class, 'addShop'])->name('shop.add');
 Route::get('active-shop', [HomeController::class, 'activeShop'])->name('shop.active');
 
 Route::post('add-to-q', [QManagementCtrl::class, 'addToQ'])->name('q.add');
+Route::post('vall', [QManagementCtrl::class, 'call'])->name('q.call');
