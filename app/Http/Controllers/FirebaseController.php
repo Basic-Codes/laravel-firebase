@@ -159,6 +159,15 @@ class FirebaseController extends Controller
         
         
         // ==========================================================================================
+        //                            Removing $remove_these items
+        // ==========================================================================================
+        foreach ($remove_these as $item) {
+            $database->getReference(''.$user->id.'/'.$shop->id.'/'.'queue/'.$item['key'])->remove();
+            $database->getReference(''.$user->id.'/'.$shop->id.'/'.'serve/'.$item['key'])->remove();
+            $database->getReference(''.$user->id.'/'.$shop->id.'/'.'park/'.$item['key'])->remove();
+            $database->getReference(''.$user->id.'/'.$shop->id.'/'.'called/'.$item['key'])->remove();
+        }
+        // ==========================================================================================
         //                             Adding $add_these items
         // ==========================================================================================
         foreach ($add_these as $item) {
@@ -167,15 +176,6 @@ class FirebaseController extends Controller
                 'phone' => $item['phone'],
                 'position' => $item['position']
             ]);
-        }
-        // ==========================================================================================
-        //                            Removing $remove_these items
-        // ==========================================================================================
-        foreach ($remove_these as $item) {
-            $database->getReference(''.$user->id.'/'.$shop->id.'/'.'queue/'.$item['key'])->remove();
-            $database->getReference(''.$user->id.'/'.$shop->id.'/'.'serve/'.$item['key'])->remove();
-            $database->getReference(''.$user->id.'/'.$shop->id.'/'.'park/'.$item['key'])->remove();
-            $database->getReference(''.$user->id.'/'.$shop->id.'/'.'called/'.$item['key'])->remove();
         }
 
         
