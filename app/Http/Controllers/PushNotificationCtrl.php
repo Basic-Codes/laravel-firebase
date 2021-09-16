@@ -25,10 +25,11 @@ class PushNotificationCtrl extends Controller
 
     public function sendNotification(Request $request)
     {
-        if(!isset($request->curr_user_id)) return ['success'=>false, 'msg'=>'curr_user_id is required'];
-        if(!isset($request->token)) return ['success'=>false, 'msg'=>'Token is required'];
+        if(!isset($request->user_id)) return ['success'=>false, 'msg'=>'user_id is required'];
+        if(!isset($request->title)) return ['success'=>false, 'msg'=>'Title is required'];
+        if(!isset($request->body)) return ['success'=>false, 'msg'=>'Body is required'];
 
-        $FcmToken = User::wehre('id', $request->curr_user_id)->pluck('device_key')->get();
+        $FcmToken = User::wehre('id', $request->user_id)->pluck('device_key')->get();
         // $FcmToken = User::whereNotNull('device_key')->pluck('device_key')->all();
         // ⚽️ $FcmToken must be an array
         

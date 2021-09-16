@@ -16,11 +16,21 @@
                         @endforeach
                     </ul>
                 </div>
-                <div style="margin-left: 10px;" class="dropdown">
-                    <button class="btn btn-dark dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                {{-- <div style="margin-left: 10px;" class="dropdown">
+                    <button class="btn btn-dark dropdown-toggle" type="button" id="user_notify_dropdown" data-bs-toggle="dropdown" aria-expanded="false">
                       {{$curr_shop->name ?? ''}}
                     </button>
-                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                    <ul class="dropdown-menu" aria-labelledby="user_notify_dropdown">
+                        @foreach ($shops as $shop_i)
+                            <li><a onclick="" class="dropdown-item" href="#">{{$shop_i->name}}</a></li>
+                        @endforeach
+                    </ul>
+                </div> --}}
+                <div style="margin-left: 10px;" class="dropdown">
+                    <button class="btn btn-dark dropdown-toggle" type="button" id="user_select_dropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                      {{$curr_shop->name ?? ''}}
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="user_select_dropdown">
                         @foreach ($shops as $shop_i)
                             <li><a class="dropdown-item" href="{{route('shop.active', ['shop_id'=>$shop_i->id])}}">{{$shop_i->name}}</a></li>
                         @endforeach
@@ -213,7 +223,15 @@
                 'curr_user_id': curr_user_id,
                 'token': token
             }
-            sendAjax('{{ route("store.device_key") }}', data)
+            sendAjax('{{ route('store.device_key') }}', data)
+        }
+        sendNotification = (user_id) => {
+            data = {
+                'user_id': user_id,
+                'title': 'Random Title'
+                'body': 'Donec sollicitudin molestie malesuada. Proin eget tortor risus.'
+            }
+            sendAjax('{{ route('notification.send') }}', data)
         }
     </script>
 
@@ -324,11 +342,8 @@
         };
 
         const app = initializeApp(firebaseConfig);
-
-        console.log(`${curr_user_id}/${curr_shop_id}/queue`);
-
+        const messaging = getMessaging();
         const db = getDatabase();
-
 
         const queueRef = ref(db, `${curr_user_id}/${curr_shop_id}/queue`);
         onValue(queueRef, (snapshot) => {
@@ -361,7 +376,7 @@
         // ==============================================================================
         // ⚽️⚽️ Push notification requires firebase-messaging-sw.js file in public folder
         function startFCM() {
-            getToken(getMessaging(), { vapidKey: 'BPZFRw-PErUfDWSVHouqwSzGpQcnr8sncarWqOpLtQ8111Kq5hY6Md1_PmYFdvwh0EMPmv5hxx9-qi1PHN-JgsU' }).then((currentToken) => {
+            getToken(messaging, { vapidKey: 'BPZFRw-PErUfDWSVHouqwSzGpQcnr8sncarWqOpLtQ8111Kq5hY6Md1_PmYFdvwh0EMPmv5hxx9-qi1PHN-JgsU' }).then((currentToken) => {
                 if (currentToken) {
                     console.log("📙", currentToken);
                     saveDeviceKey(currentToken)
@@ -373,7 +388,7 @@
             });
         }
         startFCM()
-        onMessage(getMessaging(), function (payload) {
+        onMessage(messaging, function (payload) {
             const title = payload.notification.title;
             const options = {
                 body: payload.notification.body,
