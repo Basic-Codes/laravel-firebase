@@ -105,7 +105,7 @@
                 <h5 class="text-center mb-3">Called</h5>
                 <div class="d-flex justify-content-start">
                     <button onclick="call()" class="btn btn-lg btn-primary"><i class="fas fa-phone-alt"></i></button>
-                    <button class="btn btn-lg btn-success mx-2"><i class="fas fa-concierge-bell"></i></button>
+                    <button onclick="serveComplete()" class="btn btn-lg btn-success mx-2"><i class="fas fa-concierge-bell"></i></button>
                 </div>
                 <div class="text-center my-3 py-3 rounded-3" style="background: rgb(209, 209, 209)">
                     <h1 class="display-2" style="font-weight: 800;" id="called_item">0</h1>
@@ -135,6 +135,28 @@
         curr_user_id = {!! json_encode(($curr_user->id ?? 'X')) !!};
         curr_shop_id = {!! json_encode(($curr_shop->id ?? 'X')) !!};
 
+        // =========================================================
+        //         Utility function for sending ajax request
+        // =========================================================
+        sendAjax = (url, data) => {
+            $.ajax({
+                url: url,
+                type: 'POST',
+                dataType: 'JSON',
+                data: data,
+                success: function (result) {
+                    console.log(result);
+                },
+                error: function (error) {
+                    console.log(error);
+                },
+            });
+        }
+
+
+        // =========================
+        //         Add Queue
+        // =========================
         addToQ = (type) => {
             phone_input = document.querySelector('input[name="phone"]')
             phone = phone_input.value
@@ -145,48 +167,58 @@
                 'type': type
             }
 
-            $.ajax({
-                url: '{{route('q.add')}}',
-                type: 'POST',
-                dataType: 'JSON',
-                data: data,
-                success: function (result) {
-                    console.log(result);
-                    phone_input.value = ''
-                },
-                error: function (error) {
-                    console.log(error);
-                },
-            });
+            sendAjax('{{route('q.add')}}', data)
+            phone_input.value = ''
         }
-        call = (id = 'X') => {
 
+
+        call = (id = 'X') => {
             data = {
                 'curr_user_id': curr_user_id,
                 'id': id
             }
 
-            $.ajax({
-                url: '{{route('q.call')}}',
-                type: 'POST',
-                dataType: 'JSON',
-                data: data,
-                success: function (result) {
-                    console.log(result);
-                },
-                error: function (error) {
-                    console.log(error);
-                },
-            });
+            sendAjax('{{route('q.call')}}', data)
         }
+        serve = (id = 'X') => {
+            data = {
+                'curr_user_id': curr_user_id,
+                'id': id
+            }
+            
+            sendAjax('{{route('q.serve')}}', data)
+        }
+        park = (id = 'X') => {
+            data = {
+                'curr_user_id': curr_user_id,
+                'id': id
+            }
+            
+            sendAjax('{{route('q.park')}}', data)
+        }
+        resume = (id = 'X') => {
+            data = {
+                'curr_user_id': curr_user_id,
+                'id': id
+            }
+            
+            sendAjax('{{route('q.serve')}}', data)
+        }
+        complete = (id = 'X') => {
+            data = {
+                'curr_user_id': curr_user_id,
+                'id': id
+            }
+            
+            sendAjax('{{route('q.complete')}}', data)
+        }
+    </script>
 
 
-
-
-        // ====================================================================================================================
-        //                                                     Rendering
-        // ====================================================================================================================
-
+    {{-- ----------------------------------------------------------------- --}}
+    {{--                          Firebase Rendering                       --}}
+    {{-- ----------------------------------------------------------------- --}}
+    <script>
         // =========================
         //           Queue
         // =========================
@@ -201,10 +233,10 @@
                                         <span class="d-flex justify-content-between align-items-center">
                                             <strong class="h5 mb-0">${child.val().position}</strong>
                                             <span>
-                                                <button class="btn btn-sm btn-primary"><i class="fas fa-phone-alt"></i></button>
-                                                <button class="btn btn-sm btn-info"><i class="fas fa-concierge-bell"></i></button>
+                                                <button onclick="call(${child.val().id})" class="btn btn-sm btn-primary"><i class="fas fa-phone-alt"></i></button>
+                                                <button onclick="serve(${child.val().id})" class="btn btn-sm btn-info"><i class="fas fa-concierge-bell"></i></button>
                                                 <button class="btn btn-sm btn-light"><i class="fas fa-edit"></i></button>
-                                                <button class="btn btn-sm btn-warning"><i class="fas fa-archive"></i></button>
+                                                <button onclick="park(${child.val().id})" class="btn btn-sm btn-warning"><i class="fas fa-archive"></i></button>
                                             </span>
                                         </span>
                                     </li>`;
@@ -225,8 +257,8 @@
                                         <span class="d-flex justify-content-between align-items-center">
                                             <strong class="h5 mb-0">${child.val().position}</strong>
                                             <span>
-                                                <button class="btn btn-sm btn-primary"><i class="fas fa-check-double"></i></button>
-                                                <button class="btn btn-sm btn-light"><i class="fas fa-archive"></i></button>
+                                                <button onclick="complete(${child.val().id})" class="btn btn-sm btn-primary"><i class="fas fa-check-double"></i></button>
+                                                <button onclick="park(${child.val().id})" class="btn btn-sm btn-light"><i class="fas fa-archive"></i></button>
                                             </span>
                                         </span>
                                     </li>`;
@@ -247,7 +279,7 @@
                                         <span class="d-flex justify-content-between align-items-center">
                                             <strong class="h5 mb-0">${child.val().position}</strong>
                                             <span>
-                                                <button class="btn btn-sm btn-primary"><i class="fas fa-play"></i></button>
+                                                <button onclick="resume(${child.val().id})" class="btn btn-sm btn-primary"><i class="fas fa-play"></i></button>
                                                 <button class="btn btn-sm btn-light"><i class="fas fa-bell"></i></button>
                                             </span>
                                         </span>
@@ -260,12 +292,13 @@
         // =========================
         var renderCalled = (snapshot) => {
             called_item = document.querySelector('#called_item')
-            console.log(snapshot);
+            console.log(snapshot, 'XXXXXXXX');
             snapshot.forEach((child) => {
                 // console.log(child.key, child.val());
 
                 called_item.innerText = child.val().position  || 0
             });
+            if(!snapshot.val()) called_item.innerText = 0
         };
     </script>
     

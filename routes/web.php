@@ -24,4 +24,7 @@ Route::post('add-shop', [HomeController::class, 'addShop'])->name('shop.add');
 Route::get('active-shop', [HomeController::class, 'activeShop'])->name('shop.active');
 
 Route::post('add-to-q', [QManagementCtrl::class, 'addToQ'])->name('q.add');
-Route::post('vall', [QManagementCtrl::class, 'call'])->name('q.call');
+Route::post('call', [QManagementCtrl::class, 'call'])->name('q.call');
+Route::post('serve', [QManagementCtrl::class, 'serve'])->name('q.serve');
+Route::post('park', [QManagementCtrl::class, 'park'])->name('q.park');
+Route::post('complete', [QManagementCtrl::class, 'complete'])->name('q.complete');
