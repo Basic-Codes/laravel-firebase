@@ -29,16 +29,22 @@ class QManagementCtrl extends Controller
         }
         return $next_pos;
     }
-    public function addToQ(Request $request) {        
-        if(!isset($request->phone)) return ['success'=>false, 'msg'=>'Phone number is required'];
-        if(!isset($request->curr_user_id)) return ['success'=>false, 'msg'=>'curr_user_id is required'];
-        if(!isset($request->type)) return ['success'=>false, 'msg'=>'Type is required'];
+    public function addToQ(Request $request) {    
+
+        // if(!isset($request->phone)) return ['success'=>false, 'msg'=>'Phone number is required'];
+        // if(!isset($request->curr_user_id)) return ['success'=>false, 'msg'=>'curr_user_id is required'];
+        // if(!isset($request->type)) return ['success'=>false, 'msg'=>'Type is required'];
 
         $curr_user = User::find($request->curr_user_id);
         if(!$curr_user) return ['success'=>false, 'msg'=>'Current user not found'];
         if($curr_user->active_shop) $curr_shop = Shop::find($curr_user->active_shop);
         else $curr_shop = Shop::where('user_id', $curr_user->id)->first();
         if(!$curr_shop) return ['success'=>false, 'msg'=>'Shop not found'];
+
+
+        return (new FirebaseController())->replaceInFirebase($curr_user, $curr_shop);
+        return ['success'=>false, 'msg'=>'testing...'];
+        
 
         $today = Carbon::today();
         $last_Q = Queue::where([

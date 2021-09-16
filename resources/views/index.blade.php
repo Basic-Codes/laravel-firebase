@@ -292,7 +292,7 @@
         // =========================
         var renderCalled = (snapshot) => {
             called_item = document.querySelector('#called_item')
-            console.log(snapshot, 'XXXXXXXX');
+            console.log(snapshot);
             snapshot.forEach((child) => {
                 // console.log(child.key, child.val());
 
