@@ -105,7 +105,7 @@
                 <h5 class="text-center mb-3">Called</h5>
                 <div class="d-flex justify-content-start">
                     <button onclick="call()" class="btn btn-lg btn-primary"><i class="fas fa-phone-alt"></i></button>
-                    <button onclick="serveComplete()" class="btn btn-lg btn-success mx-2"><i class="fas fa-concierge-bell"></i></button>
+                    <button onclick="complete()" class="btn btn-lg btn-success mx-2"><i class="fas fa-concierge-bell"></i></button>
                 </div>
                 <div class="text-center my-3 py-3 rounded-3" style="background: rgb(209, 209, 209)">
                     <h1 class="display-2" style="font-weight: 800;" id="called_item">0</h1>

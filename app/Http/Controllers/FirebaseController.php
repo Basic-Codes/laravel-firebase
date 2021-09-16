@@ -48,9 +48,11 @@ class FirebaseController extends Controller
         $queue_snap_value = $queue_snap->getValue();
         $firebase_queue = [];
         // converting firebase collection to php array
-        foreach ($queue_snap_value as $key => $value) {
-            $value['key'] = $key;
-            $firebase_queue[] = $value;
+        if($queue_snap_value) {
+            foreach ($queue_snap_value as $key => $value) {
+                $value['key'] = $key;
+                $firebase_queue[] = $value;
+            }
         }
         $firebase_queue_ids = array_column($firebase_queue, 'id');
         
@@ -74,9 +76,11 @@ class FirebaseController extends Controller
         $serve_snap_value = $serve_snap->getValue();
         $firebase_serve = [];
         // converting firebase collection to php array
-        foreach ($serve_snap_value as $key => $value) {
-            $value['key'] = $key;
-            $firebase_serve[] = $value;
+        if($serve_snap_value) {
+            foreach ($serve_snap_value as $key => $value) {
+                $value['key'] = $key;
+                $firebase_serve[] = $value;
+            }
         }
         $firebase_serve_ids = array_column($firebase_serve, 'id');
         
@@ -100,9 +104,11 @@ class FirebaseController extends Controller
         $park_snap_value = $park_snap->getValue();
         $firebase_park = [];
         // converting firebase collection to php array
-        foreach ($park_snap_value as $key => $value) {
-            $value['key'] = $key;
-            $firebase_park[] = $value;
+        if($park_snap_value) {
+            foreach ($park_snap_value as $key => $value) {
+                $value['key'] = $key;
+                $firebase_park[] = $value;
+            }
         }
         $firebase_park_ids = array_column($firebase_park, 'id');
         
@@ -132,15 +138,16 @@ class FirebaseController extends Controller
                 $firebase_called[] = $value;
             }
         }
-        $firebase_called = isset($firebase_called[0]) ?? null; // make first in arraw as called
+        $firebase_called = sizeof($firebase_called) > 0 ? $firebase_called[0] : null; // make first in arraw as called
         
-        $sql_called = $Qs->where('status', 'called')->count()>0 ? $Qs->where('status', 'called')[0] : null;
+        $sql_called = $Qs->where('status', 'called')->first();
+        // $sql_called = $sql_calleds->count() > 0 ? $sql_calleds->first() : null;
         if(isset($sql_called) && !isset($firebase_called)) {
             array_push($add_these, $sql_called);
         } else if (!isset($sql_called) && isset($firebase_called)) {
             array_push($remove_these, $firebase_called);
         } else if(isset($sql_called) && isset($firebase_called)) {
-            if($sql_called->id == $firebase_called['id']) {
+            if($sql_called['id'] == $firebase_called['id']) {
                 // Do nothing
             } else {
                 array_push($add_these, $sql_called);
