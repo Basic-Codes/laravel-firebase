@@ -156,9 +156,6 @@
         }
 
 
-        // =========================
-        //         Add Queue
-        // =========================
         addToQ = (type) => {
             phone_input = document.querySelector('input[name="phone"]')
             phone = phone_input.value
@@ -168,18 +165,14 @@
                 'phone': phone,
                 'type': type
             }
-
             sendAjax('{{route('q.add')}}', data)
             phone_input.value = ''
         }
-
-
         call = (id = 'X') => {
             data = {
                 'curr_user_id': curr_user_id,
                 'id': id
             }
-
             sendAjax('{{route('q.call')}}', data)
         }
         serve = (id = 'X') => {
@@ -187,7 +180,6 @@
                 'curr_user_id': curr_user_id,
                 'id': id
             }
-            
             sendAjax('{{route('q.serve')}}', data)
         }
         park = (id = 'X') => {
@@ -195,7 +187,6 @@
                 'curr_user_id': curr_user_id,
                 'id': id
             }
-            
             sendAjax('{{route('q.park')}}', data)
         }
         resume = (id = 'X') => {
@@ -203,7 +194,6 @@
                 'curr_user_id': curr_user_id,
                 'id': id
             }
-            
             sendAjax('{{route('q.serve')}}', data)
         }
         complete = (id = 'X') => {
@@ -211,8 +201,19 @@
                 'curr_user_id': curr_user_id,
                 'id': id
             }
-            
             sendAjax('{{route('q.complete')}}', data)
+        }
+
+
+        // ============================
+        //    For Push Notification
+        // ============================
+        saveDeviceKey = (token) => {
+            data = {
+                'curr_user_id': curr_user_id,
+                'token': token
+            }
+            sendAjax('{{ route("store.device_key") }}', data)
         }
     </script>
 
@@ -310,6 +311,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.1/firebase-app.js";
         import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/9.0.1/firebase-database.js";
+        import { getMessaging, getToken, onMessage } from 'https://www.gstatic.com/firebasejs/9.0.1/firebase-messaging.js';
         
         const firebaseConfig = {
             apiKey: "AIzaSyBw6Gz1Iip73-RiTWgE1H76I7FsP9Yhe7c",
@@ -353,14 +355,33 @@
             renderCalled(snapshot)
         });
 
-        
-        // function writeUserData() {
-        //     set(ref(db, 'user/'), {
-        //         name: 'Ghost',
-        //         email: 'ghost@gmail.com',
-        //     });
-        // }
-        // writeUserData()
+
+        // ==============================================================================
+        //                              For Push Notification
+        // ==============================================================================
+        // ⚽️⚽️ Push notification requires firebase-messaging-sw.js file in public folder
+        function startFCM() {
+            getToken(getMessaging(), { vapidKey: 'BPZFRw-PErUfDWSVHouqwSzGpQcnr8sncarWqOpLtQ8111Kq5hY6Md1_PmYFdvwh0EMPmv5hxx9-qi1PHN-JgsU' }).then((currentToken) => {
+                if (currentToken) {
+                    console.log("📙", currentToken);
+                    saveDeviceKey(currentToken)
+                } else {
+                    console.log('No registration token available. Request permission to generate one.');
+                }
+            }).catch((err) => {
+                console.log('An error occurred while retrieving token. ', err);
+            });
+        }
+        startFCM()
+        onMessage(getMessaging(), function (payload) {
+            const title = payload.notification.title;
+            const options = {
+                body: payload.notification.body,
+                icon: payload.notification.icon,
+            };
+            console.log("XXXXXXXXXXXXXXXXXX", title);
+            new Notification(title, options);
+        });
     </script>
     
 @endsection

@@ -17,6 +17,7 @@ class CreateUsersTable extends Migration
             $table->id();
             $table->string('name');
             $table->tinyInteger('active_shop')->nullable();
+            $table->string('device_key')->nullable();
             $table->timestamps();
         });
     }

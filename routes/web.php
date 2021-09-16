@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\PushNotificationCtrl;
 use App\Http\Controllers\QManagementCtrl;
 use App\Http\Controllers\TestController;
 use Illuminate\Support\Facades\Route;
@@ -28,3 +29,7 @@ Route::post('call', [QManagementCtrl::class, 'call'])->name('q.call');
 Route::post('serve', [QManagementCtrl::class, 'serve'])->name('q.serve');
 Route::post('park', [QManagementCtrl::class, 'park'])->name('q.park');
 Route::post('complete', [QManagementCtrl::class, 'complete'])->name('q.complete');
+
+
+Route::post('store/device-key', [PushNotificationCtrl::class, 'storeToken'])->name('store.device_key');
+Route::post('send-notification', [PushNotificationCtrl::class, 'sendNotification'])->name('notification.send');
