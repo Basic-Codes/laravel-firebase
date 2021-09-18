@@ -6,22 +6,19 @@ use App\Models\Queue;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Kreait\Firebase\Factory;
+use Kreait\Firebase\Database;
+use Kreait\Firebase\ServiceAccount;
 
 class FirebaseController extends Controller
 {
-    protected $database;
-
-    public function __construct()
-    {
-        $this->database = app('firebase.database');
-    }
-
     public function replaceInFirebase($user, $shop) {
 
         $today = Carbon::today();
         $Qs = Queue::where([['user_id', $user->id],['shop_id', $shop->id],['status', '!=', 'skipped'],['status', '!=', 'complete'],['created_at', '>=', $today]])->get();
         
         
+        // $serviceAccount = ServiceAccount::fromJsonFile(base_path().'/ServiceAccountApiKey.json');
+
         $firebase = (new Factory)
                     ->withServiceAccount(base_path().'/ServiceAccountApiKey.json')
                     ->withDatabaseUri('https://pushnotification-xxxxxxxx-default-rtdb.firebaseio.com');
@@ -44,7 +41,7 @@ class FirebaseController extends Controller
         // ==========================================================================================
         //                                   ⚽️ For Queue list
         // ==========================================================================================
-        $queue_snap = $database->getReference(''.$user->id.'/'.$shop->id.'/queue');
+        $queue_snap = $database->getReference('/'.$user->id.'/'.$shop->id.'/queue');
         $queue_snap_value = $queue_snap->getValue();
         $firebase_queue = [];
         // converting firebase collection to php array
@@ -72,7 +69,7 @@ class FirebaseController extends Controller
         // ==========================================================================================
         //                                   ⚽️ For Serve list
         // ==========================================================================================
-        $serve_snap = $database->getReference(''.$user->id.'/'.$shop->id.'/serve');
+        $serve_snap = $database->getReference('/'.$user->id.'/'.$shop->id.'/serve');
         $serve_snap_value = $serve_snap->getValue();
         $firebase_serve = [];
         // converting firebase collection to php array
@@ -100,7 +97,7 @@ class FirebaseController extends Controller
         // ==========================================================================================
         //                                   ⚽️ For Park list
         // ==========================================================================================
-        $park_snap = $database->getReference(''.$user->id.'/'.$shop->id.'/park');
+        $park_snap = $database->getReference('/'.$user->id.'/'.$shop->id.'/park');
         $park_snap_value = $park_snap->getValue();
         $firebase_park = [];
         // converting firebase collection to php array
@@ -128,7 +125,7 @@ class FirebaseController extends Controller
         // ==========================================================================================
         //                                   ⚽️ For Called Item
         // ==========================================================================================
-        $called_snap = $database->getReference(''.$user->id.'/'.$shop->id.'/called');
+        $called_snap = $database->getReference('/'.$user->id.'/'.$shop->id.'/called');
         $called_snap_value = $called_snap->getValue();
         // converting firebase collection to php array
         $firebase_called = [];
@@ -162,16 +159,16 @@ class FirebaseController extends Controller
         //                            Removing $remove_these items
         // ==========================================================================================
         foreach ($remove_these as $item) {
-            $database->getReference(''.$user->id.'/'.$shop->id.'/'.'queue/'.$item['key'])->remove();
-            $database->getReference(''.$user->id.'/'.$shop->id.'/'.'serve/'.$item['key'])->remove();
-            $database->getReference(''.$user->id.'/'.$shop->id.'/'.'park/'.$item['key'])->remove();
-            $database->getReference(''.$user->id.'/'.$shop->id.'/'.'called/'.$item['key'])->remove();
+            $database->getReference('/'.$user->id.'/'.$shop->id.'/'.'queue/'.$item['key'])->remove();
+            $database->getReference('/'.$user->id.'/'.$shop->id.'/'.'serve/'.$item['key'])->remove();
+            $database->getReference('/'.$user->id.'/'.$shop->id.'/'.'park/'.$item['key'])->remove();
+            $database->getReference('/'.$user->id.'/'.$shop->id.'/'.'called/'.$item['key'])->remove();
         }
         // ==========================================================================================
         //                             Adding $add_these items
         // ==========================================================================================
         foreach ($add_these as $item) {
-            $newItem = $database->getReference(''.$item['user_id'].'/'.$item['shop_id'].'/'.$item['status'].'')->push([
+            $newItem = $database->getReference('/'.$item['user_id'].'/'.$item['shop_id'].'/'.$item['status'].'')->push([
                 'id' => $item['id'],
                 'phone' => $item['phone'],
                 'position' => $item['position']

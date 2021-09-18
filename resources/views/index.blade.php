@@ -326,7 +326,7 @@
     </script>
     
     {{-- ----------------------------------------------------------------- --}}
-    {{--                      Firebase Realtime Setup                      --}}
+    {{--                          Firebase  Setup                          --}}
     {{-- ----------------------------------------------------------------- --}}
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.1/firebase-app.js";
@@ -400,6 +400,21 @@
             // console.log("XXXXXXXXXXXXXXXXXX", title);
             new Notification(title, options);
         });
+
+
+
+
+        // =================
+        //     For Test
+        // =================
+        // function writeUserData() {
+        //     set(ref(db, 'user/'), {
+        //         name: 'Ghost',
+        //         email: 'ghost@gmail.com',
+        //     });
+        // }
+        
     </script>
+    
     
 @endsection
