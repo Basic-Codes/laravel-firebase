@@ -417,15 +417,23 @@
         // ==========================
         //     Promise Example
         // ==========================
-        promiseExample = () => {
-            reqPromise = new Promise((res, rej) => {
+        var promiseExample = () => {
+            var reqPromise = new Promise((res, rej) => {
                 setTimeout(function(){ res('Promise Example Returned'); }, 5000);
-            })
-            reqPromise.then(prom_res => {
+            }).then(prom_res => {
                 console.log(prom_res);
             })
+            // ======
+            //   OR
+            // ======
+            // var reqPromise = new Promise((res, rej) => {
+            //     setTimeout(function(){ res('Promise Example Returned'); }, 5000);
+            // })
+            // reqPromise.then(prom_res => {
+            //     console.log(prom_res);
+            // })
         }
-        promiseExample()
+        promiseExample();
         
     </script>
     
