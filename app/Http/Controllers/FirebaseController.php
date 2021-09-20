@@ -7,7 +7,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Kreait\Firebase\Factory;
 use Kreait\Firebase\Database;
-use Kreait\Firebase\ServiceAccount;
+// use Kreait\Firebase\ServiceAccount;
 
 class FirebaseController extends Controller
 {
@@ -18,12 +18,12 @@ class FirebaseController extends Controller
         
         
         // $serviceAccount = ServiceAccount::fromJsonFile(base_path().'/ServiceAccountApiKey.json');
-
         $firebase = (new Factory)
                     ->withServiceAccount(base_path().'/ServiceAccountApiKey.json')
                     ->withDatabaseUri('https://pushnotification-xxxxxxxx-default-rtdb.firebaseio.com');
         
         $database = $firebase->createDatabase();
+        // $database = $firebase->getDatabase();
 
 
 
@@ -135,7 +135,7 @@ class FirebaseController extends Controller
                 $firebase_called[] = $value;
             }
         }
-        $firebase_called = sizeof($firebase_called) > 0 ? $firebase_called[0] : null; // make first in arraw as called
+        $firebase_called = sizeof($firebase_called) > 0 ? $firebase_called[0] : null; // make first in array as called
         
         $sql_called = $Qs->where('status', 'called')->first();
         // $sql_called = $sql_calleds->count() > 0 ? $sql_calleds->first() : null;

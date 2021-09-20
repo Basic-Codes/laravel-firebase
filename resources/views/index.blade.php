@@ -413,6 +413,19 @@
         //         email: 'ghost@gmail.com',
         //     });
         // }
+
+        // ==========================
+        //     Promise Example
+        // ==========================
+        promiseExample = () => {
+            reqPromise = new Promise((res, rej) => {
+                setTimeout(function(){ res('Promise Example Returned'); }, 5000);
+            })
+            reqPromise.then(prom_res => {
+                console.log(prom_res);
+            })
+        }
+        promiseExample()
         
     </script>
     
